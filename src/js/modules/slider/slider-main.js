@@ -1,13 +1,9 @@
-export default class Slider {
-  constructor(page, btns) {
-    // Свойства
-    this.page = document.querySelector(page);
-    this.slides = this.page.children;
-    this.btns = document.querySelectorAll(btns);
-    this.slideIndex = 1;
-  }
+import Slider from './slider';
 
-  // Методы
+export default class MainSlider extends Slider {
+  constructor(btns) {
+    super(btns); // Получаем свойства из класса Slider
+  }
 
   showSlides(n) {
     if (n > this.slides.length) {
@@ -43,11 +39,7 @@ export default class Slider {
     this.showSlides(this.slideIndex += n);
   }
 
-  render() {
-    try {
-      this.hanson = document.querySelector('.hanson');
-    } catch (e) { }
-
+  bindTriggers(){
     this.btns.forEach(btn => {
       btn.addEventListener('click', () => {
         this.plusSlides(1);
@@ -58,8 +50,32 @@ export default class Slider {
         this.showSlides(this.slideIndex);
       }); // Перемещаемся по иерархии сначала выше к родителю, потом к предыдущему соседу родителя и находим элемент, на который будет клик
     });
+   
+    document.querySelectorAll('.prevmodule').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation(); // Отмена всплытия события на другую кнопку (чтобы не по 2 слайда листалось)
+        e.preventDefault();
+        this.plusSlides(-1);
+      });
+    });
 
-    this.showSlides(this.slideIndex);
+    document.querySelectorAll('.nextmodule').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation(); // Отмена всплытия события на другую кнопку (чтобы не по 2 слайда листалось)
+        e.preventDefault();
+        this.plusSlides(1);
+      });
+    });
   }
 
+  render() {
+    if (this.container) {
+      try {
+        this.hanson = document.querySelector('.hanson');
+      } catch (e) { }
+ 
+      this.showSlides(this.slideIndex);
+      this.bindTriggers();
+    }
+  }
 }
